@@ -15,6 +15,8 @@ const getAge = new Scene(GET_AGE);
 const ABOUT_SCHOOLES = 'ABOUT_SCHOOLES';
 const aboutSchooles = new Scene(ABOUT_SCHOOLES);
 
+const FIRST_SCHOOL = 'FIRST_SCHOOL';
+const firstSchool = new Scene(FIRST_SCHOOL);
 
 atBar.command(['Да','Давай','Хочу','Можно','Расскажи'], async ctx =>{
 
@@ -51,6 +53,7 @@ getAge.command(/(\d{1,2})/,async ctx => {
         return Reply.text(`Простите, на этот возраст я не могу подобрать онлайн школы. Возрастные ограничения с 6 до 17 лет. Укажите корректный возраст`)
     }
 
+    ctx.enter(ABOUT_SCHOOLES)
     return Reply.text(`Замечательно! А я уже подобрала несколько школ, которые идеально подойдут вашему ребенку. Мне не терпится про них рассказать, Давайте я начну?`)
 })
 getAge.command(["Нам надо что-то по созданию игр",'Давай ищи'],async ctx => {
@@ -64,18 +67,46 @@ getAge.command("",async ctx => {
 })
 
 
-aboutSchooles.command('Да',async ctx=>{})
-aboutSchooles.command('Нет',async ctx=>{})
+aboutSchooles.command('Да',async ctx=>{
+    ctx.enter(FIRST_SCHOOL)
+    return Reply.text('Онлайн школа Pixel По мне так самый топ! Рейтинг 4.9 из 5 баллов. Рассказать подробнее?')
+})
+aboutSchooles.command('Нет',async ctx=>{
+    return Reply.text('Не буду рассказывать! ')
+})
 aboutSchooles.command('',async ctx=>{
     return Reply.text('Мой диалог строится на ваших ответах ДА и НЕТ, на другие я ещё не научилась отвечать. Скажите да или нет. Алиса стоп и я закончу работу навыка')
+})
+
+firstSchool.command(['Алиса, повтори еще раз', 'повтори','Повтор'],async ctx =>{
+    return Reply.text('Онлайн школа Pixel По мне так самый топ! Рейтинг 4.9 из 5 баллов. Рассказать подробнее?')
+})
+firstSchool.command(['Пришли результаты поиска','пришли результаты'],async ctx =>{
+    //TODO: где-то вытаскивать email пользователя
+    return Reply.text('Хорошо, сейчас на почту username777@yandex.ru пришлю и продолжу рассказ про школы с наивысшим рейтингом в моём списке')
+})
+firstSchool.command('Да',async ctx =>{
+    return Reply.text('Хорошо.  Сейчас я прочитаю вам наивысший отзыв и наихудший.\n' +
+        '5 звезд: Ребенок ходит уже пять лет. Все отлично. И летний лагерь очень понравился.1 звезда: Есть чему учиться Вам интересно, прислать ссылку на отзывы?')
+})
+firstSchool.command('Нет',async ctx =>{
+    return Reply.text('Очень жаль, может вам тогда на почту списком отправить?')
+})
+firstSchool.command(['Следующая','Следующая школа'],async ctx =>{
+    return Reply.text('Следующая Школа в моём списке Программирование для детей\n' +
+        'Ого! Вот это оценка! Рейтинг 4,9 из 5\n' +
+        'Рассказать подробнее?')
+
 })
 
 stage.addScene(atBar);
 stage.addScene(atEnd);
 stage.addScene(getAge);
 stage.addScene(aboutSchooles);
+stage.addScene(firstSchool)
+
 alice.use(stage.getMiddleware());
-alice.command('Алиса запусти навык Найди-сравни десткие онлайн школы ай-ти', ctx => {
+alice.command(['Алиса запусти навык Найди-сравни десткие онлайн школы ай-ти','запусти навык Айтишонок','Узнай у Айтишонка'], ctx => {
     ctx.enter(SCENE_AT_BAR);
     return Reply.text('Здравствуйте, рада слышать,что вас интересует сфера IT, за ней будующее! Если Вам будет нужна моя подборка топовых школ, просто скажите *Алиса, пришли результаты поиска*, а сейчас давайте подберем школы, которые подойдут именно вашему ребенку, Начнем ? ', {
         buttons: ['Да', 'Нет'],
